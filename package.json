@@ -1,0 +1,59 @@
+{
+  "name": "skillstreakr-api",
+  "version": "1.0.0",
+  "description": "SkillStreakr backend API",
+  "type": "module",
+  "main": "dist/app.js",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file=.env bin/www.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --env-file=.env dist/bin/www.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepare": "husky",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dpksolanki/skillstreakr-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dpksolanki/skillstreakr-api/issues"
+  },
+  "homepage": "https://github.com/Dpksolanki/skillstreakr-api#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "helmet": "^8.3.0",
+    "pino": "^10.4.0",
+    "pino-http": "^11.0.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "@types/supertest": "^7.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.1",
+    "pino-pretty": "^13.2.0",
+    "prettier": "^3.10.1",
+    "supertest": "^7.3.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  },
+  "lint-staged": {
+    "*.{ts,js,json,md,yml}": "prettier --write"
+  }
+}
