@@ -6,7 +6,7 @@ Everything explained while building SkillStreakr, in one place, and everything s
 - **Part B** is the study plan: what to read, what to focus on, how to check yourself.
 - **Part C** collects every self-check and interview question.
 
-See [README.md](README.md) for the project, [STACK.md](STACK.md) for the tools and [CHECKS.md](CHECKS.md) for the checks.
+See [README.md](README.md) for the project, [STACK.md](STACK.md) for the tools, [CHECKS.md](CHECKS.md) for the checks and [DRIZZLE.md](DRIZZLE.md) for the database layer.
 
 ---
 
@@ -27,8 +27,8 @@ What was done and learned each day. Add a new entry at the bottom every day you 
 
 | Done                                                                                                  | Learned                                                                                  | Read again                                                         |
 | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Wrote `SKILLSTREAKR.md` (full plan) and added the system design track                                 | 16-week system design roadmap; daily time split                                          | [18](#18-system-design-track-16-weeks), [20](#20-daily-time-split) |
-| GitHub repo settings                                                                                  | Visibility, no license, branch rules, squash merge, Dependabot, secret scanning          | [10](#10-git-workflow)                                             |
+| Wrote `SKILLSTREAKR.md` (full plan) and added the system design track                                 | 16-week system design roadmap; daily time split                                          | [20](#20-system-design-track-16-weeks), [22](#22-daily-time-split) |
+| GitHub repo settings                                                                                  | Visibility, no license, branch rules, squash merge, Dependabot, secret scanning          | [10](#10-git-github-settings-and-branch-protection)                |
 | Decided **two repos** (api + web)                                                                     | Monorepo vs two repos trade-offs                                                         | [9](#9-two-repos-instead-of-one)                                   |
 | API: npm, TypeScript, Express 5, helmet, cors, Zod env, pino, Vitest + Supertest, Docker Compose file | Why each package; `"type": "module"`; `nodenext` and `.js` imports; env check at startup | [3](#3-the-api-setup-file-by-file)                                 |
 | Learned what `chore` means                                                                            | Conventional Commits: 10 types                                                           | [6](#6-commit-types-conventional-commits)                          |
@@ -44,8 +44,8 @@ What was done and learned each day. Add a new entry at the bottom every day you 
 | API commit pushed (`project-setup` branch)                                                                       | Commit message format with a body                                                                                   | [6](#6-commit-types-conventional-commits)                                                                         |
 | Web step 1: Vite + React + TS; chose ESLint over Oxlint                                                          | Why ESLint for jobs and plugins                                                                                     | [8](#8-the-frontend-setup-step-by-step)                                                                           |
 | Web steps 2–5: Tailwind 4, `@/` alias, shadcn/ui, TanStack Router + Query                                        | Utility classes; why both TS and Vite need the alias; owned component code; file-based typed routes; Query defaults | [8](#8-the-frontend-setup-step-by-step)                                                                           |
-| Web pushed to `main` (first commit)                                                                              | First push to an empty repo goes to `main`                                                                          | [10](#10-git-workflow)                                                                                            |
-| Got the 2-week study list                                                                                        | What to read before coding                                                                                          | [12](#12-week-1-backend-fundamentals), [13](#13-week-2-frontend-fundamentals), [14](#14-before-the-database-step) |
+| Web pushed to `main` (first commit)                                                                              | First push to an empty repo goes to `main`                                                                          | [10](#10-git-github-settings-and-branch-protection)                                                               |
+| Got the 2-week study list                                                                                        | What to read before coding                                                                                          | [14](#14-week-1-backend-fundamentals), [15](#15-week-2-frontend-fundamentals), [16](#16-before-the-database-step) |
 
 ### 2026-11-21: Coding checklist, docs, database check
 
@@ -55,18 +55,34 @@ What was done and learned each day. Add a new entry at the bottom every day you 
 | Wrote README.md, STACK.md, CHECKS.md in both repos                                                                                 | Full project, every tool and why, every check                                  | README, STACK, CHECKS                                              |
 | Checked whether Postgres and Redis exist                                                                                           | Images were downloaded, but containers, volume and database were never created | [2](#2-docker-postgres-and-redis-how-they-are-created-and-started) |
 
-### 2026-11-22: Docker guide and this file
+### 2026-11-22: Docker, ESLint, GitHub branches and protection
 
-| Done                                                           | Learned                                                                                                                                                                           | Read again                                                             |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Docker guide: how Postgres and Redis are created and started   | Image vs container vs volume; port mapping; `up -d`, `stop`, `down` vs `down -v`; `psql` and `redis-cli`                                                                          | [2](#2-docker-postgres-and-redis-how-they-are-created-and-started)     |
-| Wrote LEARN.md with this date-wise log                         | Where to find every explanation                                                                                                                                                   | This file                                                              |
-| Started Postgres + Redis with `docker compose up -d`           | The `skillstreakr` containers run next to the DriftCharge ones on different ports                                                                                                 | [2.3](#23-create-and-start-them)                                       |
-| Listed the running containers and learned to stop / start them | `docker ps`, `ps -a`, `stats`; stop vs rm vs down vs down -v; what breaks when a container stops; API server is stopped with Ctrl + C, not Docker                                 | [2.9](#29-see-which-containers-are-running)–[2.13](#213-daily-routine) |
-| Added ESLint to the API; moved TypeScript 7 -> 6               | typescript-eslint supports TypeScript only up to 6.0; type-aware rules catch promises not awaited, unused names, `console.log`, `==`; ESLint runs before Prettier on every commit | CHECKS.md section 2.1                                                  |
-| Learned GitHub Actions cost                                    | Free with no limit on public repos (Linux runners); private repos get 2,000 free minutes a month                                                                                  | [15](#15-learn-when-the-feature-starts)                                |
+| Done                                                                                   | Learned                                                                                                                                                                           | Read again                                                                       |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Docker guide: how Postgres and Redis are created and started                           | Image vs container vs volume; port mapping; `up -d`, `stop`, `down` vs `down -v`; `psql` and `redis-cli`                                                                          | [2](#2-docker-postgres-and-redis-how-they-are-created-and-started)               |
+| Wrote LEARN.md with this date-wise log                                                 | Where to find every explanation                                                                                                                                                   | This file                                                                        |
+| Started Postgres + Redis with `docker compose up -d`                                   | The `skillstreakr` containers run next to the DriftCharge ones on different ports                                                                                                 | [2.3](#23-create-and-start-them)                                                 |
+| Listed the running containers and learned to stop / start them                         | `docker ps`, `ps -a`, `stats`; stop vs rm vs down vs down -v; what breaks when a container stops; API server is stopped with Ctrl + C, not Docker                                 | [2.9](#29-see-which-containers-are-running)–[2.13](#213-daily-routine)           |
+| Added ESLint to the API; moved TypeScript 7 -> 6                                       | typescript-eslint supports TypeScript only up to 6.0; type-aware rules catch promises not awaited, unused names, `console.log`, `==`; ESLint runs before Prettier on every commit | CHECKS.md section 2.1                                                            |
+| Learned GitHub Actions cost                                                            | Free with no limit on public repos (Linux runners); private repos get 2,000 free minutes a month                                                                                  | [17](#17-learn-when-the-feature-starts)                                          |
+| Created `main` + `development` in both repos; `development` is the default branch      | Branch model; the `git push origin -u origin main` typo                                                                                                                           | [10.1](#101-the-branch-model)–[10.3](#103-default-branch--development)           |
+| Changed repository settings (wiki off, squash + merge commit, rebase off, auto-delete) | Why each setting; why the wiki is off (shop register example)                                                                                                                     | [10.4](#104-repository-settings-and-why)                                         |
+| Imported the ruleset on `main` + `development`; added CODEOWNERS by PR                 | What each rule blocks; why the owner needs a bypass; who can merge                                                                                                                | [10.5](#105-the-ruleset)–[10.7](#107-who-can-create-and-merge-pull-requests)     |
+| Tested direct pushes on all 4 branches: all rejected (GH013)                           | `--allow-empty`, `commit-tree`, `reset --hard`                                                                                                                                    | [10.10](#1010-how-the-protection-was-tested)                                     |
+| Decided to learn the tools before CI                                                   | GitHub Actions basics; the Week 0 plan                                                                                                                                            | [11](#11-github-actions-the-basics), [13](#13-week-0-understand-the-tools-first) |
 
-**Next day's work:** follow the daily routine ([2.13](#213-daily-routine)), then start Week 1, Day 1 ([12](#12-week-1-backend-fundamentals)).
+### 2026-11-23 and 2026-11-24: Database design and Drizzle
+
+| Done                                                                        | Learned                                                                                                                               | Read again                              |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| Designed the 4 v1 tables (`users`, `skills`, `daily_logs`, `log_entries`)   | Design from the questions the app asks; uuid v7; `timestamptz` vs `date`; `text` + CHECK; unique and partial indexes; race conditions | [docs/db-design.md](docs/db-design.md)  |
+| Chose Drizzle over Prisma and Sequelize                                     | Close to SQL; CHECK and partial indexes in the schema; types without a generate step                                                  | [DRIZZLE.md](DRIZZLE.md) section 1      |
+| Built `db/`: connection pool, one file per table, shared columns, relations | How `pg.Pool` + `drizzle(pool, { schema })` connect; `.references()` vs `relations()`                                                 | [DRIZZLE.md](DRIZZLE.md) sections 4–6   |
+| Generated `db/migrations/0000_init.sql` (not applied yet)                   | drizzle-kit vs drizzle-orm; generate vs migrate                                                                                       | [DRIZZLE.md](DRIZZLE.md) section 12     |
+| Learned to read and write queries                                           | `eq`, `and`, `with`, joins, `groupBy`, transactions, upserts; the SQL behind each                                                     | [DRIZZLE.md](DRIZZLE.md) sections 10–11 |
+| Wrote DRIZZLE.md                                                            | Everything about the database layer in one file                                                                                       | [DRIZZLE.md](DRIZZLE.md)                |
+
+**Next day's work:** start Docker, run `npm run db:migrate`, check the tables in `psql` ([DRIZZLE.md](DRIZZLE.md) section 15), then continue Week 0 ([13](#13-week-0-understand-the-tools-first)).
 
 ---
 
@@ -83,26 +99,28 @@ What was done and learned each day. Add a new entry at the bottom every day you 
 7. [Git hooks: husky, lint-staged, commitlint](#7-git-hooks-husky-lint-staged-commitlint)
 8. [The frontend setup, step by step](#8-the-frontend-setup-step-by-step)
 9. [Two repos instead of one](#9-two-repos-instead-of-one)
-10. [Git workflow](#10-git-workflow)
+10. [Git, GitHub settings and branch protection](#10-git-github-settings-and-branch-protection)
+11. [GitHub Actions: the basics](#11-github-actions-the-basics)
 
 **Part B: what to learn next**
 
-11. [Rules while studying](#11-rules-while-studying)
-12. [Week 1: backend fundamentals](#12-week-1-backend-fundamentals)
-13. [Week 2: frontend fundamentals](#13-week-2-frontend-fundamentals)
-14. [Before the database step](#14-before-the-database-step)
-15. [Learn when the feature starts](#15-learn-when-the-feature-starts)
-16. [Months 1–4 topic plan](#16-months-14-topic-plan)
-17. [Node.js depth checklist](#17-nodejs-depth-checklist)
-18. [System design track (16 weeks)](#18-system-design-track-16-weeks)
-19. [English plan](#19-english-plan)
-20. [Daily time split](#20-daily-time-split)
+12. [Rules while studying](#12-rules-while-studying)
+13. [Week 0: understand the tools first](#13-week-0-understand-the-tools-first)
+14. [Week 1: backend fundamentals](#14-week-1-backend-fundamentals)
+15. [Week 2: frontend fundamentals](#15-week-2-frontend-fundamentals)
+16. [Before the database step](#16-before-the-database-step)
+17. [Learn when the feature starts](#17-learn-when-the-feature-starts)
+18. [Months 1–4 topic plan](#18-months-14-topic-plan)
+19. [Node.js depth checklist](#19-nodejs-depth-checklist)
+20. [System design track (16 weeks)](#20-system-design-track-16-weeks)
+21. [English plan](#21-english-plan)
+22. [Daily time split](#22-daily-time-split)
 
 **Part C: check yourself**
 
-21. [Self-check questions](#21-self-check-questions)
-22. [Interview questions this setup prepares you for](#22-interview-questions-this-setup-prepares-you-for)
-23. [Progress tracker](#23-progress-tracker)
+23. [Self-check questions](#23-self-check-questions)
+24. [Interview questions this setup prepares you for](#24-interview-questions-this-setup-prepares-you-for)
+25. [Progress tracker](#25-progress-tracker)
 
 ---
 
@@ -113,7 +131,7 @@ What was done and learned each day. Add a new entry at the bottom every day you 
 1. Read one section of Part A, then open the files it mentions and read the real code.
 2. Answer that section's questions in Part C, **in English, in your own words**, without looking.
 3. Then follow Part B day by day. Every topic ends with something you build.
-4. Tick the boxes in [section 23](#23-progress-tracker) as you go.
+4. Tick the boxes in [section 25](#25-progress-tracker) as you go.
 
 ---
 
@@ -590,25 +608,299 @@ Monorepos (Google, Shopify, Vercel) are worth knowing for interviews; you can ex
 
 ---
 
-## 10. Git workflow
+## 10. Git, GitHub settings and branch protection
+
+### 10.1 The branch model
 
 ```
+feature branch  --PR (squash)-->  development  --PR (merge commit)-->  main
+(feat/..., fix/...,               (finished work                       (latest stable,
+ chore/..., ci/...)                comes together)                      released code)
+```
+
+| Branch                                       | Purpose                                                       | Direct push | Merged by                                   |
+| -------------------------------------------- | ------------------------------------------------------------- | ----------- | ------------------------------------------- |
+| `main`                                       | Latest stable, released code                                  | Blocked     | Only the owner, by PR from `development`    |
+| `development`                                | All finished work comes together here; the **default branch** | Blocked     | Only the owner, by PR from feature branches |
+| `feat/...`, `fix/...`, `chore/...`, `ci/...` | One task each                                                 | Allowed     | Deleted automatically after merge           |
+
+### 10.2 How the branches were created
+
+`skillstreakr-api` had no `main` yet (the first push went to `project-setup`), so `main` was made from it, then `development` from `main`:
+
+```bash
+git fetch origin
+git checkout project-setup
+git pull
+git checkout -b main              # new branch "main" from here
+git push -u origin main           # create it on GitHub
+git checkout -b development       # new branch "development" from main
+git push -u origin development
+```
+
+`skillstreakr-web` already had `main`, so only `development` was created from it.
+
+**A mistake that happened, and why:**
+
+```
+git push origin -u origin main
+fatal: refs/remotes/origin/HEAD cannot be resolved to branch
+```
+
+`origin` was written twice. Git reads the second `origin` as a branch name to push, which means `origin/HEAD`, a pointer that wasn't set locally. Nothing was pushed or broken. The right command names the remote once: `git push -u origin main`.
+
+| Part of `git push -u origin main` | Meaning                                                           |
+| --------------------------------- | ----------------------------------------------------------------- |
+| `-u`                              | Remember the link, so later a plain `git push` / `git pull` works |
+| `origin`                          | The remote (the GitHub repo)                                      |
+| `main`                            | The branch to push                                                |
+
+### 10.3 Default branch = `development`
+
+Settings -> General -> Default branch. New pull requests then target `development` automatically, so nobody opens a PR into `main` by mistake. It's also the branch people see first on GitHub.
+
+### 10.4 Repository settings and why
+
+**Features**
+
+| Setting                   | Value                 | Why                                                                              |
+| ------------------------- | --------------------- | -------------------------------------------------------------------------------- |
+| Wikis                     | **Off**               | See the example below                                                            |
+| Issues                    | On, anyone can create | Anyone can report a bug; only the owner acts on it                               |
+| Sponsorships, Discussions | Off                   | Not needed                                                                       |
+| Projects                  | On                    | Task board for both repos                                                        |
+| Pull requests             | On, anyone can create | Anyone can **create** a PR; only the owner can **merge** (the ruleset does that) |
+
+**Why the wiki is off: a real-life example.** A shop keeps one main register (the repo) and a separate diary in the corner (the wiki). The owner changes a price in the register and forgets the diary. A customer reads the diary and gets the wrong price. Two places with the same information always drift apart one day. Our docs (README, STACK, CHECKS, LEARN) live **inside** the repo: they change in the same PR as the code, they are reviewed, and they have history. A wiki is edited outside PRs, so the hooks and reviews never see it. Turning it off deletes nothing, and it can be turned on again later.
+
+**Pull Requests**
+
+| Setting                                       | Value                                            | Why                                                                                       |
+| --------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Allow merge commits                           | On, message "Pull request title and description" | Used for release PRs `development` -> `main`                                              |
+| Allow squash merging                          | On, message "Pull request title"                 | Used for feature PRs: one commit per task, named after the PR (`feat: add skills module`) |
+| Allow rebase merging                          | Off                                              | Only two merge methods, so nobody has to choose                                           |
+| Always suggest updating pull request branches | On                                               | Shows "Update branch" when `development` has moved ahead                                  |
+| Allow auto-merge                              | Off                                              | Turn on after CI exists                                                                   |
+| Automatically delete head branches            | On                                               | Feature branches disappear after merge                                                    |
+
+**Why two merge methods:** squash for features keeps `development` clean (one commit per task). A **merge commit** for releases keeps `development` and `main` sharing the same history. If `development` were squashed into `main`, the histories would split, and every later release PR would show old changes again as conflicts.
+
+**Other sections:** Commits, Archives, Pushes and Issues stay at their defaults. **Never touch the Danger Zone**; "Disable branch protection rules" there would switch off the ruleset.
+
+### 10.5 The ruleset
+
+Settings -> Rules -> Rulesets -> `protect-main-and-development`. It was created by **importing** `D:\skillstreakr\ruleset-protect-main-and-development.json` (kept outside both repos), so both repos have exactly the same rules.
+
+| Field       | Value                                        | Why                                                                                                                                                        |
+| ----------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Enforcement | **Active**                                   | "Evaluate" would only report, not block                                                                                                                    |
+| Bypass      | **Repository admin, for pull requests only** | GitHub doesn't let you approve your own PR, so the owner needs a bypass to merge. "For pull requests only" still forbids direct pushes, even for the owner |
+| Targets     | `main`, `development`                        | The two long-lived branches                                                                                                                                |
+
+| Rule                                   | On?           | What it does                                                                                                          |
+| -------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Restrict deletions                     | Yes           | Nobody can delete `main` or `development` (this also protects `development` when auto-delete runs after a release PR) |
+| Require a pull request before merging  | Yes           | No direct pushes                                                                                                      |
+| Required approvals                     | 1             | Someone must approve                                                                                                  |
+| Dismiss stale approvals on new commits | Yes           | New code needs a new approval                                                                                         |
+| Require review from Code Owners        | Yes           | That approval must come from the owner (CODEOWNERS)                                                                   |
+| Require conversation resolution        | Yes           | All review comments resolved first                                                                                    |
+| Allowed merge methods                  | Merge, Squash | Same as the repository settings                                                                                       |
+| Block force pushes                     | Yes           | Nobody can rewrite history                                                                                            |
+| Require linear history                 | **No**        | It would block the merge commit used for releases                                                                     |
+| Require status checks to pass          | Not yet       | Turned on after the first CI run (section 11.4)                                                                       |
+
+### 10.6 CODEOWNERS
+
+File `.github/CODEOWNERS`:
+
+```
+# Every file needs a review from the repository owner before it can be merged.
+* @Dpksolanki
+```
+
+`*` means every file. With "Require review from Code Owners", every PR needs **this person's** approval. The file was added through a PR (`chore/codeowners`) because direct pushes were already blocked; the owner merged it with **"Confirm bypass rules and merge"**.
+
+### 10.7 Who can create and merge pull requests
+
+| Person                         | Create a PR?                   | Merge?                                   | Why                                      |
+| ------------------------------ | ------------------------------ | ---------------------------------------- | ---------------------------------------- |
+| Owner                          | Yes                            | **Yes**                                  | Admin bypass for pull requests           |
+| Any GitHub user (public repo)  | Yes, by forking                | **No**                                   | No write access                          |
+| A collaborator (if ever added) | Yes, from a branch in the repo | **No, not without the owner's approval** | The ruleset requires a Code Owner review |
+
+Personal repositories have no read-only collaborator role: anyone added can push branches. The ruleset is what keeps `main` and `development` safe.
+
+### 10.8 Daily workflow
+
+```bash
+git checkout development
+git pull                               # get the latest
 git checkout -b feat/skills-module     # one branch per task
-... write code ...
+# ... write code ...
+git status                             # .env must NOT be listed
 git add .
-git status                              # .env must NOT be listed
-git commit -m "feat: add skills module" # hooks run
-git push -u origin feat/skills-module   # tests run
-GitHub -> Compare & pull request -> Squash and merge
+git commit -m "feat: add skills module"     # hooks run
+git push -u origin feat/skills-module       # tests run
 ```
 
-Repo settings that protect `main`: pull request required, force push blocked, squash merge only, auto-delete branches, Dependabot, secret scanning with push protection.
+On GitHub: PR `feat/skills-module` -> `development` -> **Confirm bypass rules and merge** with **Squash and merge**. Afterwards, locally: `git checkout development && git pull`.
+
+### 10.9 Release workflow
+
+1. New pull request: base **`main`**, compare **`development`**.
+2. Title `release: v0.1.0`; the body lists what's included. (It's a PR title, not a commit message, so commitlint doesn't check it.)
+3. Merge with **Create a merge commit**, not squash.
+4. Optional: Releases -> Draft a new release -> tag `v0.1.0` on `main`.
+
+### 10.10 How the protection was tested
+
+**`git commit --allow-empty -m "test: direct push"`** makes a commit with no file changes. Normally Git refuses ("nothing to commit"); `--allow-empty` allows it. It's the safest dummy for testing a push, because no code changes.
+
+Real-life example: to check that the guard at a gate really stops people without a pass, you walk up with an **empty box**. Nothing inside can get lost. If the guard stops you (push rejected), the rule works. Then you throw the box away.
+
+The actual test used an even safer way, which never touches local branches:
+
+```bash
+SHA=$(git commit-tree "origin/development^{tree}" -p origin/development -m "test: direct push")
+git push origin "$SHA:refs/heads/development"
+```
+
+`git commit-tree` builds the empty commit object without putting it on any branch, so no `git reset` is needed afterwards.
+
+Result on 2026-11-22: all four branches rejected the push, and none changed on GitHub.
+
+```
+remote: error: GH013: Repository rule violations found for refs/heads/development.
+remote: - Changes must be made through a pull request.
+ ! [remote rejected] ... -> development (push declined due to repository rule violations)
+```
+
+**`git reset --hard origin/development`** makes the local branch exactly like GitHub's and **also deletes uncommitted changes**. Run `git status` first; use it only when the working tree is clean.
+
+### 10.11 Git commands used so far
+
+| Command                                    | What it does                                                          |
+| ------------------------------------------ | --------------------------------------------------------------------- |
+| `git status`                               | What changed, what's staged, which branch you're on                   |
+| `git branch` / `git branch --show-current` | List local branches / show the current one                            |
+| `git fetch origin`                         | Download what's new on GitHub without changing your files             |
+| `git pull`                                 | Fetch + bring the current branch up to date                           |
+| `git checkout <branch>`                    | Switch branch                                                         |
+| `git checkout -b <branch>`                 | Create a branch from where you are and switch to it                   |
+| `git add .`                                | Stage all changes for the next commit                                 |
+| `git commit -m "type: text"`               | Save a commit (hooks run)                                             |
+| `git push -u origin <branch>`              | Upload the branch and remember the link                               |
+| `git log --oneline -5`                     | Last 5 commits, one line each                                         |
+| `git ls-remote --heads origin`             | List the branches on GitHub                                           |
+| `git reset --hard origin/<branch>`         | Make the local branch equal to GitHub's (deletes uncommitted changes) |
+| `git push --no-verify`                     | Skip the hooks: emergency only                                        |
+
+---
+
+## 11. GitHub Actions: the basics
+
+### 11.1 What CI is
+
+**CI (Continuous Integration)** means: every time code is pushed or a pull request is opened, a machine automatically installs the project and runs the checks (lint, typecheck, tests, build). **GitHub Actions** is GitHub's built-in service that does this.
+
+Real-life example: a teacher checks every answer sheet with the same answer key before the result is published. The hooks on your PC are like checking your own sheet: useful, but you can skip it (`--no-verify`). CI is the teacher: it checks every sheet the same way, on a clean machine, and you can't skip it. With "Require status checks to pass", a red result means the PR can't be merged.
+
+### 11.2 The words
+
+| Word                | Meaning                                                                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Workflow**        | A YAML file in `.github/workflows/` that describes an automation                                                             |
+| **Event (trigger)** | What starts the workflow: `push`, `pull_request`, a schedule, a manual button                                                |
+| **Job**             | A group of steps that runs on one machine; jobs can run in parallel                                                          |
+| **Step**            | One command (`run:`) or one ready-made action (`uses:`)                                                                      |
+| **Runner**          | The machine that runs a job; `ubuntu-latest` is a fresh Linux machine from GitHub, deleted after the job                     |
+| **Action**          | A reusable step written by someone else, e.g. `actions/checkout` (download the code), `actions/setup-node` (install Node.js) |
+| **Status check**    | The pass/fail result GitHub shows on a PR                                                                                    |
+| **Cache**           | Saved files (e.g. the npm cache) reused by the next run, so installs are faster                                              |
+| **Secret**          | A password or key stored in the repo settings, given to the workflow without appearing in logs                               |
+| **Matrix**          | Running the same job with several settings, e.g. Node 22 and Node 24                                                         |
+
+### 11.3 The planned workflow for the API, line by line
+
+File: `.github/workflows/ci.yml`
+
+```yaml
+name: CI # name shown in the Actions tab
+
+on: # the events that start it
+  pull_request:
+    branches: [development, main] # every PR into these branches
+  push:
+    branches: [development, main] # and every merge into them
+
+permissions:
+  contents: read # the job can only read the code (least privilege)
+
+jobs:
+  ci: # job id; this becomes the status check name
+    runs-on: ubuntu-latest # fresh Linux machine
+    steps:
+      - uses: actions/checkout@v4 # download the repo
+      - uses: actions/setup-node@v4 # install Node.js
+        with:
+          node-version: 24
+          cache: npm # reuse the npm cache between runs
+      - run: npm ci # exact install from package-lock.json
+      - run: npm run lint # ESLint
+      - run: npm run typecheck # tsc --noEmit
+      - run: npm test # Vitest (uses .env.example, because CI has no .env)
+      - run: npm run build # tsc -> dist/
+```
+
+If any step fails, the next steps don't run and the check turns red.
+
+| Detail                      | Why                                                                                          |
+| --------------------------- | -------------------------------------------------------------------------------------------- |
+| `npm ci`, not `npm install` | Installs exactly the lockfile versions and fails if `package.json` and the lockfile disagree |
+| `.env.example` in tests     | CI has no `.env` (it is never committed); `vitest.config.ts` falls back to `.env.example`    |
+| `@v4` after an action       | Pins the major version so a new release can't silently change the workflow                   |
+| Indentation                 | YAML uses spaces, never tabs; wrong indentation is the most common error                     |
+
+The web repo's workflow is the same idea with `npm ci -> npm run lint -> npm run build`.
+
+### 11.4 How CI connects to the ruleset
+
+After the first run, the check `ci` appears on PRs. Then: Ruleset -> tick **Require status checks to pass** -> add the check **`ci`**. From then on a PR with a red check can't be merged, not even by mistake.
+
+### 11.5 Cost
+
+| Repo                   | Linux minutes                                                             |
+| ---------------------- | ------------------------------------------------------------------------- |
+| Public (our two repos) | Free, no limit                                                            |
+| Private (Free plan)    | 2,000 free minutes a month; Windows minutes count double, macOS ten times |
+
+One run takes about 1–2 minutes. No credit card is needed: on the Free plan, a private repo that runs out of minutes simply stops running jobs until next month.
+
+### 11.6 Where to see it
+
+| Place                           | Shows                                                |
+| ------------------------------- | ---------------------------------------------------- |
+| PR page -> Checks               | Pass or fail for that PR                             |
+| Actions tab                     | Every run, with full logs per step                   |
+| A failed run -> **Re-run jobs** | Runs it again (useful for a temporary network error) |
+
+### 11.7 Common mistakes
+
+| Mistake                           | Result                               | Fix                                    |
+| --------------------------------- | ------------------------------------ | -------------------------------------- |
+| Tabs or wrong indentation in YAML | Workflow invalid                     | 2 spaces per level                     |
+| File outside `.github/workflows/` | Never runs                           | Exact folder name                      |
+| `npm install` in CI               | Different versions from your machine | `npm ci`                               |
+| Secrets written in the YAML       | Leaked publicly                      | Repo Settings -> Secrets and variables |
+| Node version different from local | "Works on my machine"                | Same major version (24)                |
 
 ---
 
 # Part B: what to learn next
 
-## 11. Rules while studying
+## 12. Rules while studying
 
 1. **Read the docs, then type the code yourself.** No copy-paste.
 2. **Every topic ends with something you built.** Reading alone is not learning.
@@ -618,7 +910,35 @@ Repo settings that protect `main`: pull request required, force push blocked, sq
 
 ---
 
-## 12. Week 1: backend fundamentals
+## 13. Week 0: understand the tools first
+
+Before Week 1, learn the four tools everything so far is built on: **Git -> GitHub -> GitHub Actions -> Docker**. Same rules as always: read, then do it yourself, then explain it in 5 lines of English.
+
+| Day     | Topic                        | Read / do                                                                                                                                   | Focus on                                                                        | Build / self-check                                                                                                      |
+| ------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 1       | **Git basics**               | learngitbranching.js.org (Main: levels 1–4; Remote: levels 1–3); git-scm.com/book chapters 2 and 3                                          | Commit, branch, checkout, merge, what `origin` is, fetch vs pull                | Make a practice folder, `git init`, 3 commits on 2 branches, merge them                                                 |
+| 2       | **GitHub flow**              | docs.github.com: "About pull requests", "About merge methods on GitHub", "About protected branches" / "About rulesets", "About code owners" | PR lifecycle, squash vs merge commit vs rebase, why rules and code owners exist | Explain sections 10.4–10.7 of this file without looking                                                                 |
+| 3       | **Your GitHub settings**     | Open both repos' Settings next to section 10                                                                                                | Find every setting; say why it has its value                                    | Open a small docs PR yourself and merge it with the bypass                                                              |
+| 4       | **GitHub Actions**           | docs.github.com: "Understanding GitHub Actions", "Quickstart for GitHub Actions", "Workflow syntax" (on, jobs, steps, runs-on)              | Workflow, event, job, step, runner, action, status check                        | Explain every line of the workflow in section 11.3                                                                      |
+| 5       | **GitHub Actions, hands-on** | A throwaway public practice repo                                                                                                            | Triggers, a failing step, logs, re-run                                          | Workflow that prints "hello" on push; then add a step that fails on purpose and read the log                            |
+| 6 (Sat) | **Docker**                   | docs.docker.com "Get started" parts 1–3; "Docker Compose overview"                                                                          | Image, container, volume, port mapping, network, compose                        | Re-read section 2; stop and start the SkillStreakr containers; connect with `psql` and `redis-cli`                      |
+| 7 (Sun) | **Docker, deeper + review**  | docs.docker.com: "Writing a Dockerfile", "Multi-stage builds"                                                                               | Layers, `FROM` / `COPY` / `RUN` / `CMD`, why multi-stage                        | Write a practice Dockerfile for a tiny Node "hello" server (not the API yet); answer all Week 0 questions in section 23 |
+
+What you must be able to do at the end of Week 0:
+
+- [ ] Create a branch, commit, push, open a PR and merge it, explaining each step
+- [ ] Explain the difference between `fetch`, `pull` and `push`
+- [ ] Explain squash vs merge commit, and why releases use a merge commit
+- [ ] Explain what the ruleset blocks and why the owner needs a bypass
+- [ ] Read a workflow YAML file and say what each line does
+- [ ] Explain image vs container vs volume, and what `5433:5432` means
+- [ ] Start, stop and inspect the SkillStreakr containers without notes
+
+Resources: learngitbranching.js.org, git-scm.com/book (free), docs.github.com, docs.docker.com/get-started.
+
+---
+
+## 14. Week 1: backend fundamentals
 
 | Day     | Topic              | Read                                                                                                                                               | Focus on                                                                            | Build / self-check                                   |
 | ------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------------- |
@@ -632,7 +952,7 @@ Repo settings that protect `main`: pull request required, force push blocked, sq
 
 ---
 
-## 13. Week 2: frontend fundamentals
+## 15. Week 2: frontend fundamentals
 
 | Day      | Topic               | Read                                                                          | Focus on                                                                    | Build / self-check                        |
 | -------- | ------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------- |
@@ -646,7 +966,7 @@ Repo settings that protect `main`: pull request required, force push blocked, sq
 
 ---
 
-## 14. Before the database step
+## 16. Before the database step
 
 | Topic             | Read                                                                        | Why                                                                                                                        |
 | ----------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -659,7 +979,7 @@ Then write the **DB design note** by hand (`users`, `skills`, `daily_logs`, `log
 
 ---
 
-## 15. Learn when the feature starts
+## 17. Learn when the feature starts
 
 | Topic                                        | When        | Key points                                                                                          |
 | -------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------- |
@@ -681,7 +1001,7 @@ Then write the **DB design note** by hand (`users`, `skills`, `daily_logs`, `log
 
 ---
 
-## 16. Months 1–4 topic plan
+## 18. Months 1–4 topic plan
 
 | Month | Weeks | Topics                                                                               |
 | ----- | ----- | ------------------------------------------------------------------------------------ |
@@ -692,7 +1012,7 @@ Then write the **DB design note** by hand (`users`, `skills`, `daily_logs`, `log
 
 ---
 
-## 17. Node.js depth checklist
+## 19. Node.js depth checklist
 
 - [ ] Event loop phases
 - [ ] `process.nextTick` vs `setImmediate`
@@ -708,7 +1028,7 @@ Then write the **DB design note** by hand (`users`, `skills`, `daily_logs`, `log
 
 ---
 
-## 18. System design track (16 weeks)
+## 20. System design track (16 weeks)
 
 25 minutes every weekday, 1.5 hours on Saturday (one full design with a diagram), 1 hour on Sunday (revise + explain one design out loud and record it).
 
@@ -735,7 +1055,7 @@ Resources: **System Design Primer** (GitHub, free), **ByteByteGo** / _System Des
 
 ---
 
-## 19. English plan
+## 21. English plan
 
 | Daily (25 min)                         | Weekly                                                        |
 | -------------------------------------- | ------------------------------------------------------------- |
@@ -750,7 +1070,7 @@ Resources: **System Design Primer** (GitHub, free), **ByteByteGo** / _System Des
 
 ---
 
-## 20. Daily time split
+## 22. Daily time split
 
 | Slot                      | Weekday (3 h) | Saturday (7 h)    | Sunday (7 h)                   |
 | ------------------------- | ------------- | ----------------- | ------------------------------ |
@@ -767,7 +1087,7 @@ Take a 10-minute break every 50 minutes.
 
 # Part C: check yourself
 
-## 21. Self-check questions
+## 23. Self-check questions
 
 Answer in English, in your own words, without looking. Then check against Part A.
 
@@ -806,9 +1126,37 @@ Answer in English, in your own words, without looking. Then check against Part A
 22. What is a closure? Give one real use.
 23. Microtask vs macrotask: which runs first, and why?
 
+### Git and GitHub
+
+24. What is the difference between `git fetch`, `git pull` and `git push`?
+25. Why did `git push origin -u origin main` fail?
+26. Why is `development` the default branch and not `main`?
+27. Why do feature PRs use squash but release PRs use a merge commit?
+28. Why is "Require linear history" off?
+29. Why does the owner need a bypass, and what does "for pull requests only" stop?
+30. What does `* @Dpksolanki` in CODEOWNERS do?
+31. Who can create a PR on our repos, and who can merge it?
+32. What does `git commit --allow-empty` do, and why was it used?
+33. Why is the wiki turned off? Give the real-life example.
+
+### GitHub Actions
+
+34. What is CI, and why are git hooks alone not enough?
+35. Explain workflow, event, job, step, runner and action.
+36. Why `npm ci` in CI and not `npm install`?
+37. How do tests get environment variables in CI when there is no `.env`?
+38. What does "Require status checks to pass" change?
+39. Is GitHub Actions free for us? What changes for a private repo?
+
+### Docker (deeper)
+
+40. What is a Dockerfile, and how is it different from `docker-compose.yml`?
+41. What is a layer, and why does the order of `COPY` and `RUN` matter?
+42. What is a multi-stage build, and why does it make images smaller?
+
 ---
 
-## 22. Interview questions this setup prepares you for
+## 24. Interview questions this setup prepares you for
 
 1. What happens between `app.listen` and your controller running?
 2. How does middleware order matter in Express?
@@ -822,10 +1170,13 @@ Answer in English, in your own words, without looking. Then check against Part A
 10. Why Postgres and not MongoDB for this product?
 11. Why a modular monolith and not microservices?
 12. How do you make sure one user can never read another user's data?
+13. How do you protect the main branch in a team?
+14. What is CI, and what does your pipeline check?
+15. What is the difference between a Docker image, a container and a volume?
 
 ---
 
-## 23. Progress tracker
+## 25. Progress tracker
 
 ### Part A: understood
 
@@ -835,9 +1186,12 @@ Answer in English, in your own words, without looking. Then check against Part A
 - [ ] Module template understood
 - [ ] Commit types and hooks understood
 - [ ] Frontend steps 1–5 understood
+- [ ] Branch model, repository settings, ruleset and CODEOWNERS understood (section 10)
+- [ ] GitHub Actions words and the planned workflow understood (section 11)
 
 ### Part B: learned
 
+- [ ] Week 0: Git, GitHub flow, GitHub settings, GitHub Actions, Docker
 - [ ] Week 1: Node.js, Express, own code, TypeScript, Zod, HTTP, testing
 - [ ] Week 2: React, effects, Tailwind, shadcn, Router, Query, Git workflow
 - [ ] SQL basics (sqlbolt)
@@ -848,5 +1202,5 @@ Answer in English, in your own words, without looking. Then check against Part A
 
 ### Part C: answered
 
-- [ ] Self-check questions 1–23
-- [ ] Interview questions 1–12, said out loud and recorded once
+- [ ] Self-check questions 1–42
+- [ ] Interview questions 1–15, said out loud and recorded once

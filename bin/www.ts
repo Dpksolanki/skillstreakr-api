@@ -2,6 +2,7 @@ import http from "node:http";
 import app from "../app.js";
 import { env } from "../config/env.js";
 import { logger } from "../core/index.js";
+import { closeDb } from "../db/index.js";
 
 const server = http.createServer(app);
 
@@ -19,10 +20,14 @@ server.on("error", (error: NodeJS.ErrnoException) => {
   throw error;
 });
 
-// Finish in-flight requests before exiting (deploys send SIGTERM).
+// Finish in-flight requests, then close the DB pool, before exiting (deploys send SIGTERM).
 const shutdown = (signal: string): void => {
   logger.info(`${signal} received, shutting down`);
-  server.close(() => process.exit(0));
+  server.close(() => {
+    closeDb()
+      .catch((error: unknown) => logger.error({ err: error }, "Failed to close the database pool"))
+      .finally(() => process.exit(0));
+  });
   setTimeout(() => process.exit(1), 10_000).unref();
 };
 

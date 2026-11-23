@@ -4,12 +4,13 @@
 
 This file explains the **whole product**: what it is, who it is for, every feature, every module and how we build it, the architecture, the data, the flows, the plans and pricing, and the roadmap.
 
-| Document                  | What it covers                                                               |
-| ------------------------- | ---------------------------------------------------------------------------- |
-| **README.md** (this file) | The full project                                                             |
-| [STACK.md](STACK.md)      | The backend stack: every tool, why we chose it, how it is set up             |
-| [CHECKS.md](CHECKS.md)    | Every check (automatic and manual) that protects the code                    |
-| [LEARN.md](LEARN.md)      | What to learn: everything explained so far, date by date, and the study plan |
+| Document                  | What it covers                                                                                                         |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **README.md** (this file) | The full project                                                                                                       |
+| [STACK.md](STACK.md)      | The backend stack: every tool, why we chose it, how it is set up                                                       |
+| [CHECKS.md](CHECKS.md)    | Every check (automatic and manual) that protects the code                                                              |
+| [LEARN.md](LEARN.md)      | What to learn: everything explained so far, date by date, and the study plan                                           |
+| [DRIZZLE.md](DRIZZLE.md)  | How the database layer works: Drizzle, the connection, every db file, queries, migrations, best practices, cheat sheet |
 
 ---
 

@@ -12,5 +12,17 @@
     "skipLibCheck": true,
     "sourceMap": true
   },
-  "include": ["app.ts", "bin", "config", "core", "helper", "middleware", "modules", "utils", "tests"]
+  "include": [
+    "app.ts",
+    "bin",
+    "config",
+    "core",
+    "db",
+    "helper",
+    "middleware",
+    "modules",
+    "utils",
+    "tests",
+    "drizzle.config.ts"
+  ]
 }

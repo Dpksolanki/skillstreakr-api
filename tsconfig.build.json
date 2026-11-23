@@ -1,4 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["app.ts", "bin", "config", "core", "helper", "middleware", "modules", "utils"]
+  "include": ["app.ts", "bin", "config", "core", "db", "helper", "middleware", "modules", "utils"],
+  "exclude": ["db/migrations"]
 }
