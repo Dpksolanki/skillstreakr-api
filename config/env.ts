@@ -7,6 +7,8 @@ const envSchema = z.object({
   DATABASE_URL: z.url(),
   REDIS_URL: z.url(),
   WEB_ORIGIN: z.url(),
+  // The user every request acts as until real login exists (never used in production).
+  DEV_USER_EMAIL: z.email().default("dev@skillstreakr.local"),
 });
 
 const parsed = envSchema.safeParse(process.env);

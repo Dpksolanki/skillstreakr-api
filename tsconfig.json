@@ -22,6 +22,7 @@
     "middleware",
     "modules",
     "utils",
+    "types",
     "tests",
     "drizzle.config.ts"
   ]

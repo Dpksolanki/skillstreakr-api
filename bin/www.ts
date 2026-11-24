@@ -1,7 +1,7 @@
 import http from "node:http";
 import app from "../app.js";
 import { env } from "../config/env.js";
-import { logger } from "../core/index.js";
+import { closeRedis, logger } from "../core/index.js";
 import { closeDb } from "../db/index.js";
 
 const server = http.createServer(app);
@@ -20,12 +20,16 @@ server.on("error", (error: NodeJS.ErrnoException) => {
   throw error;
 });
 
-// Finish in-flight requests, then close the DB pool, before exiting (deploys send SIGTERM).
+// Finish in-flight requests, then close Postgres and Redis, before exiting (deploys send SIGTERM).
 const shutdown = (signal: string): void => {
   logger.info(`${signal} received, shutting down`);
   server.close(() => {
-    closeDb()
-      .catch((error: unknown) => logger.error({ err: error }, "Failed to close the database pool"))
+    void Promise.allSettled([closeDb(), closeRedis()])
+      .then((results) => {
+        for (const result of results) {
+          if (result.status === "rejected") logger.error({ err: result.reason }, "Failed to close a connection");
+        }
+      })
       .finally(() => process.exit(0));
   });
   setTimeout(() => process.exit(1), 10_000).unref();

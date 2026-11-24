@@ -256,10 +256,14 @@ curl http://localhost:4000/v1/nope          # 404 JSON
 
 Current tests:
 
-| File                   | Test                                                | Checks                                                            |
-| ---------------------- | --------------------------------------------------- | ----------------------------------------------------------------- |
-| `tests/health.test.ts` | returns the success response                        | `GET /v1/health` -> 200, `status: "success"`, `data.status: "up"` |
-| `tests/health.test.ts` | returns a 404 failure response for an unknown route | `GET /v1/does-not-exist` -> 404, `status: "failure"`              |
+| File                           | Test                                                                                                    | Checks                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `tests/health.test.ts`         | 200 when Postgres and Redis are up; 503 when either is down                                             | Repository replaced with fakes, so no database is needed |
+| `tests/me.test.ts`             | `GET /v1/me`: profile without the password hash; 401 when the dev user isn't seeded; 409 on a duplicate | currentUser + users module + database error mapping      |
+| `tests/date.test.ts`           | `getLocalDate` in India, New York, UTC and London (daylight saving)                                     | The user's "today"                                       |
+| `tests/validate.test.ts`       | `parseInput` returns cleaned data or a 400 with field errors                                            | Request validation                                       |
+| `tests/database-error.test.ts` | Postgres codes 23505/23503 -> 409, 23514/23502/22P02 -> 400, others -> not mapped                       | Database error mapping                                   |
+| `tests/health.test.ts`         | returns a 404 failure response for an unknown route                                                     | `GET /v1/does-not-exist` -> 404, `status: "failure"`     |
 
 Edge cases every future feature must test:
 
@@ -298,22 +302,19 @@ Edge cases every future feature must test:
 
 ## 10. Checks still to add
 
-| Check                    | Tool                                                           | When                      | Will block                                         |
-| ------------------------ | -------------------------------------------------------------- | ------------------------- | -------------------------------------------------- |
-| CI on every pull request | GitHub Actions: `npm ci` -> lint -> typecheck -> test -> build | Next                      | Merging broken code                                |
-| Request validation       | `middleware/validate.ts` with Zod                              | With the first module     | Bad body / params / query (400)                    |
-| Current user             | `middleware/current-user.ts`                                   | With the first module     | Requests without a user; `user_id` from the client |
-| Ownership                | Every repository query filters by `user_id`                    | With the first module     | Reading another user's data                        |
-| Database constraints     | Unique `(user_id, log_date)` and others                        | Week 1                    | Duplicate rows, even under race conditions         |
-| Auth                     | JWT + refresh rotation                                         | Weeks 4–5                 | Unauthenticated access, stolen tokens              |
-| Rate limiting            | express-rate-limit + Redis                                     | Week 4                    | Brute force, cost spikes                           |
-| Webhook signature        | HMAC with `timingSafeEqual`                                    | Week 11                   | Fake webhook calls                                 |
-| Idempotency              | Unique `delivery_id`, fixed job ids                            | Week 8–11                 | Duplicate processing                               |
-| Readiness                | Health checks Postgres + Redis                                 | With the DB               | Traffic sent to an instance whose DB is down       |
-| Real-DB tests            | Testcontainers                                                 | Week 8                    | Bugs that mocks hide                               |
-| Error tracking           | Sentry                                                         | Week 12                   | Errors nobody notices                              |
-| Dependency audit         | `npm audit` in CI                                              | With CI                   | Known vulnerable packages                          |
-| Module boundaries        | dependency-cruiser                                             | When there are 3+ modules | One module reaching into another's internal files  |
+| Check                    | Tool                                                           | When                      | Will block                                        |
+| ------------------------ | -------------------------------------------------------------- | ------------------------- | ------------------------------------------------- |
+| CI on every pull request | GitHub Actions: `npm ci` -> lint -> typecheck -> test -> build | Next                      | Merging broken code                               |
+| Ownership                | Every repository query filters by `user_id`                    | With the first module     | Reading another user's data                       |
+| Database constraints     | Unique `(user_id, log_date)` and others                        | Week 1                    | Duplicate rows, even under race conditions        |
+| Auth                     | JWT + refresh rotation                                         | Weeks 4–5                 | Unauthenticated access, stolen tokens             |
+| Rate limiting            | express-rate-limit + Redis                                     | Week 4                    | Brute force, cost spikes                          |
+| Webhook signature        | HMAC with `timingSafeEqual`                                    | Week 11                   | Fake webhook calls                                |
+| Idempotency              | Unique `delivery_id`, fixed job ids                            | Week 8–11                 | Duplicate processing                              |
+| Real-DB tests            | Testcontainers                                                 | Week 8                    | Bugs that mocks hide                              |
+| Error tracking           | Sentry                                                         | Week 12                   | Errors nobody notices                             |
+| Dependency audit         | `npm audit` in CI                                              | With CI                   | Known vulnerable packages                         |
+| Module boundaries        | dependency-cruiser                                             | When there are 3+ modules | One module reaching into another's internal files |
 
 ---
 
@@ -372,8 +373,9 @@ Edge cases every future feature must test:
 - [ ] GitHub Actions CI
 - [ ] DB design note for `users`, `skills`, `daily_logs`, `log_entries` (written by hand, then reviewed)
 - [ ] Drizzle + pg: `core/db.ts`, schema, migrations, seed dev user
-- [ ] Health checks Postgres + Redis
-- [ ] `validate`, `currentUser`, `getLocalDate`, cursor pagination
+- [x] Health checks Postgres + Redis (200 / 503)
+- [x] `parseInput` (validation), `currentUser` + dev user seed, `getLocalDate`, Postgres error mapping, `GET /v1/me`
+- [ ] Cursor pagination (with the first list endpoint)
 - [ ] `skills` module (list, create, update, archive)
 - [ ] `logs` module (create entry in a transaction, list by date range, update, delete)
 - [ ] Tests for the timezone helper and both modules

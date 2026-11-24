@@ -32,29 +32,29 @@ See [README.md](README.md) for the full project and [CHECKS.md](CHECKS.md) for e
 
 ## 1. Stack at a glance
 
-| Layer               | Choice                                           | Status                      |
-| ------------------- | ------------------------------------------------ | --------------------------- |
-| Runtime             | Node.js 24 LTS                                   | In use                      |
-| Language            | TypeScript (strict)                              | In use                      |
-| Package manager     | npm                                              | In use                      |
-| Framework           | Express 5                                        | In use                      |
-| Security middleware | helmet, cors                                     | In use                      |
-| Validation          | Zod                                              | In use (env); requests next |
-| Logging             | pino + pino-http                                 | In use                      |
-| Tests               | Vitest + Supertest                               | In use                      |
-| Quality             | Prettier, husky, lint-staged, commitlint         | In use                      |
-| Linting             | ESLint + typescript-eslint                       | In use                      |
-| Local services      | Docker Compose: Postgres 17, Redis 7             | File ready, not started yet |
-| Database access     | Drizzle ORM + pg                                 | Week 1                      |
-| Auth                | argon2, jose, arctic                             | Weeks 4–5                   |
-| Queue / cache       | ioredis + BullMQ                                 | Week 11                     |
-| Rate limiting       | express-rate-limit + Redis store                 | Week 4                      |
-| Files / email       | AWS S3 + SES (MinIO + Mailpit locally)           | Weeks 9–10                  |
-| Errors / traces     | Sentry, OpenTelemetry                            | Week 12                     |
-| AI                  | Claude API, pgvector, Voyage embeddings, MCP SDK | v4                          |
-| Payments            | Razorpay                                         | v4                          |
-| CI                  | GitHub Actions                                   | Next                        |
-| Hosting             | Railway / Render, then AWS                       | Week 16                     |
+| Layer               | Choice                                           | Status                                   |
+| ------------------- | ------------------------------------------------ | ---------------------------------------- |
+| Runtime             | Node.js 24 LTS                                   | In use                                   |
+| Language            | TypeScript (strict)                              | In use                                   |
+| Package manager     | npm                                              | In use                                   |
+| Framework           | Express 5                                        | In use                                   |
+| Security middleware | helmet, cors                                     | In use                                   |
+| Validation          | Zod                                              | In use (env); requests next              |
+| Logging             | pino + pino-http                                 | In use                                   |
+| Tests               | Vitest + Supertest                               | In use                                   |
+| Quality             | Prettier, husky, lint-staged, commitlint         | In use                                   |
+| Linting             | ESLint + typescript-eslint                       | In use                                   |
+| Local services      | Docker Compose: Postgres 17, Redis 7             | File ready, not started yet              |
+| Database access     | Drizzle ORM + pg                                 | Week 1                                   |
+| Auth                | argon2, jose, arctic                             | Weeks 4–5                                |
+| Redis client        | ioredis                                          | In use (health check); BullMQ in Week 11 |
+| Rate limiting       | express-rate-limit + Redis store                 | Week 4                                   |
+| Files / email       | AWS S3 + SES (MinIO + Mailpit locally)           | Weeks 9–10                               |
+| Errors / traces     | Sentry, OpenTelemetry                            | Week 12                                  |
+| AI                  | Claude API, pgvector, Voyage embeddings, MCP SDK | v4                                       |
+| Payments            | Razorpay                                         | v4                                       |
+| CI                  | GitHub Actions                                   | Next                                     |
+| Hosting             | Railway / Render, then AWS                       | Week 16                                  |
 
 ---
 
@@ -117,7 +117,7 @@ app.ts               builds Express: middleware -> /v1 routes -> 404 -> error ha
 config/env.ts        validated environment variables
 core/                shared infrastructure: logger (later db, redis, queue)
 helper/              status codes + ErrorHandler class
-middleware/          dispatcher, notFound, handleError (later validate, currentUser, rateLimit)
+middleware/          dispatcher, notFound, handleError, currentUser (later rateLimit)
 utils/               constants and small helpers
 modules/index.ts     exports v1
 modules/v1/index.ts  mounts every module: v1.use("/health", health)
@@ -184,7 +184,7 @@ On `SIGTERM` (sent by deploys) or `SIGINT` (Ctrl+C), the server stops taking new
 - If anything is wrong, the app prints the exact fields and **stops at startup**, not in the middle of a user's request.
 - `.env.example` lists every variable with safe local values and is committed; `.env` is never committed.
 
-Next: a `validate` middleware will check the body, params and query of every request with a Zod schema per route.
+Requests are checked in the controller with `parseInput(schema, req.body)` from `utils/validate.ts`: it returns typed data or throws a 400 `ErrorHandler` with the field errors (`errors: { formErrors, fieldErrors }`). A helper in the controller (like the verifier) instead of a middleware, because it gives the controller fully typed data.
 
 ---
 
@@ -242,7 +242,7 @@ Set up:
 
 - `vitest.config.ts` loads `.env` (or `.env.example` when there is no `.env`, as in CI) and sets `NODE_ENV=test`.
 - Tests live in `tests/**/*.test.ts`.
-- Current tests: `GET /v1/health` returns success; an unknown route returns a 404 failure.
+- Current tests (22): health (200 / 503 with Postgres or Redis down), unknown route 404, `GET /v1/me` (profile without the password hash, 401 when not seeded, 409 on a duplicate), `getLocalDate` across timezones and daylight saving, `parseInput`, and the Postgres error mapping. The health and users tests replace the repository with fakes (`vi.spyOn`), so they need no running database.
 
 ---
 
@@ -348,12 +348,12 @@ Cost control: a Redis counter per user per day, caching of results, Pro-only acc
 
 ## 16. Observability (planned)
 
-| Tool                               | Job                                                                                                   |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| pino                               | JSON logs with request id, user id, module and step                                                   |
-| **Sentry**                         | Error tracking with stack traces (API and worker)                                                     |
-| **OpenTelemetry** -> Grafana Cloud | Traces (request -> DB -> queue -> job) and metrics (latency, error rate, queue depth, event-loop lag) |
-| Health checks                      | `/v1/health` (alive) and a readiness check of Postgres + Redis                                        |
+| Tool                               | Job                                                                                                         |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| pino                               | JSON logs with request id, user id, module and step                                                         |
+| **Sentry**                         | Error tracking with stack traces (API and worker)                                                           |
+| **OpenTelemetry** -> Grafana Cloud | Traces (request -> DB -> queue -> job) and metrics (latency, error rate, queue depth, event-loop lag)       |
+| Health checks                      | `/v1/health`: `select 1` on Postgres and `PING` on Redis, run together; 200 when both are up, 503 otherwise |
 
 ---
 
