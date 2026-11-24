@@ -399,7 +399,7 @@ Rule: a module uses another module **only through its service class**, never thr
 
 | Module          | Features               | What it owns                                                     | How we build it                                                                                                                                                                                                                                                                                                 |
 | --------------- | ---------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `health`        | Platform               | `/v1/health`                                                     | Returns status; later checks Postgres (`SELECT 1`) and Redis (`PING`)                                                                                                                                                                                                                                           |
+| `health`        | Platform               | `/v1/health`                                                     | Checks Postgres (`SELECT 1`) and Redis (`PING`) together; 200 when both are up, 503 otherwise                                                                                                                                                                                                                   |
 | `auth`          | 1, 2, 3, 43            | Signup, login, tokens, OAuth, email verification, password reset | argon2 password hashes; jose JWT access token (15 min) in an HttpOnly cookie; refresh token (30 days) stored only as a hash and **rotated** on every use; reuse of an old token revokes all sessions; arctic for Google/GitHub OAuth with state + PKCE; one-time hashed tokens for email verification and reset |
 | `users`         | 4, 42                  | Profile, settings, timezone, plan, delete account                | `GET/PATCH /me`; timezone stored as an IANA name (`Asia/Kolkata`); delete removes all the user's rows in one transaction                                                                                                                                                                                        |
 | `skills`        | 5                      | Skills, templates                                                | One `skills` table; `template` enum; template fields in `details` JSONB validated by a Zod schema per template; archive instead of delete                                                                                                                                                                       |
@@ -424,16 +424,17 @@ Rule: a module uses another module **only through its service class**, never thr
 
 Shared building blocks used by every module:
 
-| Block                 | File                         | Job                                                                                |
-| --------------------- | ---------------------------- | ---------------------------------------------------------------------------------- |
-| `dispatcher`          | `middleware/dispatcher.ts`   | Runs the controller, sends `{ status, statusCode, data }`                          |
-| `handleError`         | `middleware/handle-error.ts` | One place for all errors; hides internal errors from users                         |
-| `notFound`            | `middleware/not-found.ts`    | 404 for unknown routes                                                             |
-| `ErrorHandler`        | `helper/error-handler.ts`    | Throw it for expected errors: `new ErrorHandler(404, "Skill not found")`           |
-| `validate` (next)     | `middleware/validate.ts`     | Zod check of body, params and query; 400 with field errors                         |
-| `currentUser` (next)  | `middleware/current-user.ts` | Sets `req.user` from the verified token; until auth exists, from a seeded dev user |
-| `getLocalDate` (next) | `utils/date.ts`              | The user's "today" from their timezone                                             |
-| Pagination (next)     | `utils/pagination.ts`        | `?limit&after` -> `{ items, nextCursor }`                                          |
+| Block              | File                         | Job                                                                                                |
+| ------------------ | ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `dispatcher`       | `middleware/dispatcher.ts`   | Runs the controller, sends `{ status, statusCode, data }`                                          |
+| `handleError`      | `middleware/handle-error.ts` | One place for all errors; hides internal errors from users                                         |
+| `notFound`         | `middleware/not-found.ts`    | 404 for unknown routes                                                                             |
+| `ErrorHandler`     | `helper/error-handler.ts`    | Throw it for expected errors: `new ErrorHandler(404, "Skill not found")`                           |
+| `parseInput`       | `utils/validate.ts`          | Zod check in the controller; returns typed data or a 400 with field errors                         |
+| `currentUser`      | `middleware/current-user.ts` | Sets `req.user`; until auth exists, the seeded dev user (`npm run db:seed`), refused in production |
+| `getLocalDate`     | `utils/date.ts`              | The user's "today" from their timezone                                                             |
+| `mapDatabaseError` | `helper/database-error.ts`   | Postgres constraint errors -> 409 / 400 instead of 500                                             |
+| Pagination (next)  | `utils/pagination.ts`        | `?limit&after` -> `{ items, nextCursor }`                                                          |
 
 ---
 
@@ -790,10 +791,10 @@ Money-saving rules: everything local in Months 1–4; an AWS billing alert from 
 
 **Status today:**
 
-| Done                                                                                                                           | Next                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| Both repositories, Express API with `/v1/health`, error handling, logging, env check, Docker Compose, tests, git hooks, ESLint | CI, DB design note, Drizzle schema + seed, `skills` and `logs` modules |
-| React app with Tailwind, shadcn/ui, TanStack Router + Query                                                                    | API client, skills and today's log screens                             |
+| Done                                                                                                                                                                                                                                               | Next                                       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Both repositories, Express API, error handling, logging, env check, Docker Compose, git hooks, ESLint, branch protection, DB design + Drizzle schema (4 tables), health check (Postgres + Redis), validation, current user, `GET /v1/me`, 22 tests | CI, `skills` and `logs` modules            |
+| React app with Tailwind, shadcn/ui, TanStack Router + Query                                                                                                                                                                                        | API client, skills and today's log screens |
 
 ---
 
